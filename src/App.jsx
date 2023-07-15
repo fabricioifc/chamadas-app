@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+// import reactLogo from './assets/react.svg'
+// import viteLogo from '/vite.svg'
 import './App.css'
 import { supabase } from './helper/supabase'
 import { BrowserRouter } from 'react-router-dom'
@@ -12,9 +12,14 @@ import { CustomProvider } from 'rsuite'
 import LoginPage from './pages/LoginPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminPage from './pages/AdminPage'
-import ClassePage from './pages/ClassePage'
-import ClasseEditPage from './pages/ClasseEditPage'
+import ClassePage from './pages/classe/ClassePage'
+import ClasseEditPage from './pages/classe/ClasseEditPage'
 import PageNotFound from './pages/PageNotFound'
+import ChamadaPage from './pages/chamada/ChamadaPage'
+import ChamadaEditPage from './pages/chamada/ChamadaEditPage'
+
+import ptBR from 'rsuite/locales/pt_BR';
+import { IntlProvider } from 'react-intl'
 
 const loginWithGitHub = async () => {
   const { user, session, error } = await supabase.auth.signInWithOAuth({
@@ -47,49 +52,72 @@ function App() {
 
   return (
 
-    <CustomProvider theme="dark">
-      <BrowserRouter>
-      <AuthProvider>
-        <RootLayout>
-          <Routes>
-            <Route path="/" element={<WelcomePage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route 
-              path="/admin" 
-              element={
-                <ProtectedRoute>
-                  <AdminPage />
-                </ProtectedRoute>
-            } />
-            <Route 
-              path="/classes" 
-              element={
-                <ProtectedRoute>
-                  <ClassePage />
-                </ProtectedRoute>
-            } />
-            <Route 
-              path="/classes/new" 
-              element={
-                <ProtectedRoute>
-                  <ClasseEditPage />
-                </ProtectedRoute>
-            } />
-            <Route 
-              path="/classes/:id/edit" 
-              element={
-                <ProtectedRoute>
-                  <ClasseEditPage />
-                </ProtectedRoute>
-            } />
+    <IntlProvider locale="pt-BR">
+      <CustomProvider theme="dark" locale={ptBR}>
+        <BrowserRouter>
+        <AuthProvider>
+          <RootLayout>
+            <Routes>
+              <Route path="/" element={<WelcomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route 
+                path="/admin" 
+                element={
+                  <ProtectedRoute>
+                    <AdminPage />
+                  </ProtectedRoute>
+              } />
+              <Route 
+                path="/classes" 
+                element={
+                  <ProtectedRoute>
+                    <ClassePage />
+                  </ProtectedRoute>
+              } />
+              <Route 
+                path="/classes/new" 
+                element={
+                  <ProtectedRoute>
+                    <ClasseEditPage />
+                  </ProtectedRoute>
+              } />
+              <Route 
+                path="/classes/:id/edit" 
+                element={
+                  <ProtectedRoute>
+                    <ClasseEditPage />
+                  </ProtectedRoute>
+              } />
 
-            <Route path="*" element={<PageNotFound />} />
-          </Routes>
-        </RootLayout>
-      </AuthProvider>
-    </BrowserRouter>
-    </CustomProvider>
+              <Route 
+                path="/chamadas" 
+                element={
+                  <ProtectedRoute>
+                    <ChamadaPage />
+                  </ProtectedRoute>
+              } />
+              <Route 
+                path="/chamadas/new" 
+                element={
+                  <ProtectedRoute>
+                    <ChamadaEditPage />
+                  </ProtectedRoute>
+              } />
+              <Route 
+                path="/chamadas/:id/edit" 
+                element={
+                  <ProtectedRoute>
+                    <ChamadaEditPage />
+                  </ProtectedRoute>
+              } />
 
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
+          </RootLayout>
+        </AuthProvider>
+      </BrowserRouter>
+      </CustomProvider>
+    </IntlProvider>
   )
 }
 

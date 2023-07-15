@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { supabase } from '../helper/supabase';
+import { supabase } from '../../helper/supabase';
 import { Stack, Schema, Row, Col, Panel, Message } from 'rsuite';
-import ClasseForm from '../forms/ClasseForm';
-import Classe from '../types/Classe';
-import Loading from '../helper/Loading';
+import ClasseForm from '../../forms/ClasseForm';
+import Classe from '../../types/Classe';
+import Loading from '../../helper/Loading';
 
 const { StringType } = Schema.Types;
 

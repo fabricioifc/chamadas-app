@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../helper/supabase';
-import Classe from '../types/Classe';
-import { useAuth } from '../hooks/Auth';
-import { FlexboxGrid, Panel, Row, Col } from 'rsuite';
+import { supabase } from '../../helper/supabase';
+import Chamada from '../../types/Chamada';
+import { useAuth } from '../../hooks/Auth';
+import { FlexboxGrid, Panel, Row, Col, Tag, IconButton } from 'rsuite';
 import { Link } from 'react-router-dom';
 import { Button, Stack } from 'rsuite';
 import PlusRound from '@rsuite/icons/PlusRound';
 import TrashIcon from '@rsuite/icons/Trash';
-import EditIcon from '@rsuite/icons/Edit';
 import { useNavigate } from 'react-router-dom';
 
 import { Table } from 'rsuite';
-import Loading from '../helper/Loading';
+import Loading from '../../helper/Loading';
 const { Column, HeaderCell, Cell } = Table;
 
-const ClassePage = () => {
-    const { user } = useAuth();
-    const [list, setList] = useState<Classe[]>([]);
+const tableName = 'chamadas';
+const title = 'Chamadas'
+
+const ChamadaPage = () => {
+    // const { user } = useAuth();
+    const [list, setList] = useState<Chamada[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,7 @@ const ClassePage = () => {
         setIsDeleting(true);
         try {
             const { data: x, error } = await supabase
-                .from('classes')
+                .from(tableName)
                 .delete()
                 .match({ id })
             if (error) throw error;
@@ -43,25 +45,30 @@ const ClassePage = () => {
 
     const handleEdit = (id: number) => {
         setError(null);
-        navigate(`/classes/${id}/edit`);
+        navigate(`/${tableName}/${id}/edit`);
         
     };
 
     useEffect(() => {
-        const fetchClasse = async () => {
+        const fetchAll = async () => {
             try {
-                const { data: lista, error } = await supabase
-                    .from('classes')
-                    .select('*');
+                let { data: lista, error } = await supabase
+                .from('chamadas')
+                .select(`
+                    id, dtaula, qtde, hrini, hrfim, classe_id,
+                    classes (
+                        id, name
+                    )
+                `)
                 if (error) throw error;
-                setList(lista ?? []);
+                setList(lista as Chamada[] || []);
             } catch (error) {
                 setError(error.message);
             } finally {
                 setLoading(false);
             }
         };
-        fetchClasse();
+        fetchAll();
     }, []);
 
     const getData = () => {
@@ -89,19 +96,17 @@ const ClassePage = () => {
     };
     
 
-    if (loading) return <Loading title='Classes' />
+    if (loading) return <Loading title={tableName} />
     if (error) return <p>{error}</p>;
 
     return (
         <FlexboxGrid justify="center">
-            <FlexboxGrid.Item colspan={20}>
+            <FlexboxGrid.Item as={Col} colspan={24}>
                 <Panel 
-                
-                    bordered 
                     header={
-                        <Stack direction="row" spacing={20} justifyContent='space-between'>
-                            <span>Classes</span>
-                            <Button to="/classes/new" as={Link} appearance="primary" startIcon={<PlusRound />}>
+                        <Stack direction="row" spacing={10} justifyContent='space-around'>
+                            <Tag color="green">{title}</Tag>
+                            <Button to={`/${tableName}/new`} as={Link} appearance="primary" startIcon={<PlusRound />}>
                                 Adicionar
                             </Button>
                         </Stack>
@@ -113,33 +118,44 @@ const ClassePage = () => {
                         onSortColumn={handleSortColumn}
                         sortColumn={sortColumn}
                         sortType={sortType}
+                        autoHeight
+                        affixHeader
+                        affixHorizontalScrollbar
                     >
-                        <Column align="center" flexGrow={1}>
+                        <Column align="center" flexGrow={1} fixed>
                             <HeaderCell>#</HeaderCell>
-                            <Cell dataKey="id" />
+                            <Cell>
+                                {rowData => <Link to={`/${tableName}/${rowData.id}/edit`}>{rowData.id}</Link>}
+                            </Cell>
                         </Column>
 
-                        <Column align='left' flexGrow={7} sortable>
-                            <HeaderCell>Nome</HeaderCell>
-                            <Cell dataKey="name" />
+                        <Column align='left' flexGrow={2} sortable>
+                            <HeaderCell>Data</HeaderCell>
+                            <Cell>
+                                {rowData => new Date(rowData.dtaula).toLocaleDateString('pt-BR', {timeZone: 'UTC'})}
+                            </Cell>
+                            </Column>
+                        <Column align='left' flexGrow={1}>
+                            <HeaderCell>Aulas</HeaderCell>
+                            <Cell dataKey="qtde" />
                         </Column>
 
-                        <Column align="center" flexGrow={3}>
+                        <Column align='left' flexGrow={2}>
+                            <HeaderCell>Horário</HeaderCell>
+                            <Cell>{(rowData) => rowData.hrini.substr(0,5) + ' - ' + rowData.hrfim.substr(0,5)}</Cell>
+                        </Column>
+
+                        <Column align='left' flexGrow={2} sortable>
+                            <HeaderCell>Turma</HeaderCell>
+                            <Cell dataKey="classes.name" />
+                        </Column>
+
+                        <Column align="center" flexGrow={1}>
                             <HeaderCell>Ações</HeaderCell>
                             <Cell>
                                 {(rowData) => {
                                     return (
-                                        <Row>
-                                            <Col>
-                                                <Button disabled={isDeleting} onClick={() => handleEdit(rowData.id)} appearance="ghost" color="green" size="xs" startIcon={<EditIcon/>}>
-                                                    Alterar
-                                                </Button>
-                                                {' '}
-                                                <Button disabled={isDeleting} onClick={() => handleDelete(rowData.id)} appearance="ghost" color="red" size="xs" startIcon={<TrashIcon/>}>
-                                                    Remover
-                                                </Button>
-                                            </Col>
-                                        </Row>
+                                        <IconButton onClick={() => handleDelete(rowData.id)} icon={<TrashIcon />} size="xs" appearance='ghost' color='red' />
                                     );
                                 }}
                             </Cell>
@@ -152,4 +168,4 @@ const ClassePage = () => {
     )
 }
 
-export default ClassePage
+export default ChamadaPage

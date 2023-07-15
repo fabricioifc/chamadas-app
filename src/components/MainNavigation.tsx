@@ -18,7 +18,7 @@ const MainNavigation = ({onSelect, activeKey, ...props}) => {
                 <Avatar circle src="https://avatars.githubusercontent.com/u/15609339" alt="@hiyangguo" />
             </Navbar.Brand>
             <Nav onSelect={onSelect} activeKey={activeKey}>
-                <Nav.Item eventKey="1" to="/" as={NavLink} icon={<HomeIcon />}>Home</Nav.Item>
+                {/* <Nav.Item eventKey="1" to="/" as={NavLink} icon={<HomeIcon />}>Home</Nav.Item> */}
                 {!user && 
                     (<>
                         <Nav.Item eventKey="2" to="/login" as={NavLink}>Login</Nav.Item>
@@ -30,8 +30,8 @@ const MainNavigation = ({onSelect, activeKey, ...props}) => {
                         <Nav.Item eventKey="4" to="/classes" as={NavLink} icon={<PeoplesMap />}>
                             <Tag color="orange">Classes</Tag>
                         </Nav.Item>
-                        <Nav.Item eventKey="5" to="/admin" as={NavLink} icon={<AdminIcon />}>
-                            <Tag color="green">Admin</Tag>
+                        <Nav.Item eventKey="5" to="/chamadas" as={NavLink} icon={<AdminIcon />}>
+                            <Tag color="green">Chamadas</Tag>
                         </Nav.Item>
                     </>)
                 
