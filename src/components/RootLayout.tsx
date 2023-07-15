@@ -24,7 +24,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
                 <Footer>
                     <FlexboxGrid justify="center" align="middle" style={{ flex: 1 }}>
                         <Panel>
-                            <p>© 2021 - Todos os direitos reservados</p>
+                            <p>© 2023 - Todos os direitos reservados</p>
                         </Panel>
                     </FlexboxGrid>
                 </Footer>
